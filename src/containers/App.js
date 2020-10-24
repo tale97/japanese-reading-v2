@@ -8,8 +8,6 @@ import { Grid, Paper } from "@material-ui/core";
 import { katakanaToRomaji } from "../jap-char";
 import Signin from "../components/Signin";
 import Register from "../components/Register";
-import WordCard from "../components/WordCard";
-import WordCard2 from "../components/WordCard2";
 import OutsideAlerter from "../components/OutsideAlerter";
 import Footer from "../components/Footer";
 import MessageBar from "../components/MessageBar";
@@ -35,7 +33,6 @@ import {
 import {
   GETWORD_URL,
   UPDATECHARSCORE_URL,
-  WORDSCORE_URL,
   MEDIA_BASE_URL_WORD,
   USER_TIME_LIMIT_IN_MINUTES,
 } from "../constants";
@@ -217,14 +214,11 @@ class App extends Component {
     this.setState({ route: route });
   };
 
-  parseJapaneseWord = (katakana_word) => {
+  parseJapaneseWord = (word) => {
     var charsToRead = [];
-    for (const katakana_char of katakana_word) {
-      var katakana_romaji = katakanaToRomaji[katakana_char] || "??";
-      charsToRead.push({ 
-        char: katakana_char, 
-        romaji: katakana_romaji 
-      });
+    for (const c of word) {
+      var c_romaji = katakanaToRomaji[c] || "??";
+      charsToRead.push({ char: c, romaji: c_romaji });
     }
     return charsToRead;
   };
@@ -238,8 +232,7 @@ class App extends Component {
         char: katakana_char,
         score: score,
       }),
-    })
-      .then((res) => res.json())
+    }).then((res) => res.json())
       .then((data) => {
         console.log("Update Char Score:", data);
       })
@@ -248,36 +241,13 @@ class App extends Component {
       });
   };
 
-  // not used
-  updateWordScore = (user_uid, word) => {
-    fetch(WORDSCORE_URL, {
-      method: "post",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        user_uid: user_uid,
-        word: word,
-        unix_time: this.state.currentWord_unix_time,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log("Update Word Score:", data);
-        // once score is updated, request new word
-        this.requestNewWord();
-      })
-      .catch((error) => {
-        console.log("Failed to update word score", error);
-      });
-  };
-
   parseAudio = (audio_string) => {
     return audio_string.slice(7, audio_string.length - 1);
   };
 
   requestNewWord = async() => {
-    console.log(`Requesting word for user with id ${this.state.userInfo.id}`)
+    console.log(`Requesting char for user with id ${this.state.userInfo.id}`)
     return new Promise(resolve => {
-      console.log('requesting new word...')
       this.setState({ clickedJapChar: "" });
       this.setState({ isFetchingWord: true })
       const wordRequestTime = Date.now();
@@ -290,20 +260,14 @@ class App extends Component {
         body: JSON.stringify({
           user_uid: this.state.userInfo.id,
         }),
-      })
-        .then((res) => res.json())
-        .then((word) => {
-          console.log('sucessfully requested new word...')
-  
-          if (word === "END GAME") {
-            this.setState({ openEndDialogue: true });
-          }
+      }).then((res) => res.json())
+        .then((word) => {         
           this.setState({ isFetchingWord: false });
           this.setState({ requestedWord: word }); // not sure if should use await here
           resolve();
         })
         .catch((err) => {
-          console.log("Error in getting next word", err);
+          console.log("Error in getting next char", err);
         });
     });
   };
@@ -311,35 +275,10 @@ class App extends Component {
   moveToNextWord = async(word) => {
     console.log(`DEBUG ${JSON.stringify(word)}`)
     const { setCurrentChar, updateWord } = this.props;
-    var romajiList = [];
-    
-    if (Object.keys(word).includes("word")) {
-      romajiList = this.parseJapaneseWord(word.word).map(
-      (kana_char) => kana_char.romaji
-      );
-      console.log(`DEBUG2 ${romajiList}`)
-      updateWord(word.word, romajiList);
-      setCurrentChar(word.word.charAt(0), romajiList[0]);
-    } else {
-      romajiList = this.parseJapaneseWord(word.vocab_kana).map(
-        (kana_char) => kana_char.romaji
-      );
-      updateWord(word.vocab_kana, romajiList);
-      setCurrentChar(word.vocab_kana.charAt(0), romajiList[0]);
-      const audio_url = `${MEDIA_BASE_URL_WORD}${this.parseAudio(word.vocab_sound_local)}`
-      const word_audio = new Audio(audio_url);
-  
-      word_audio.addEventListener("loadedmetadata", (event) => {
-        console.log("audio duration", event.target.duration)
-        this.setState({
-          word_audio_duration: event.target.duration,
-        });
-      });
-    }
-
+    setCurrentChar(word, katakanaToRomaji[word]);
+    updateWord(word, [katakanaToRomaji[word]]);
     this.setState({ currentWordInfo: word });
     this.setState({ currentWord_unix_time: Date.now() });
-    
   }
 
   requestAndUpdateWord = async() => {
@@ -390,14 +329,15 @@ class App extends Component {
   };
 
   displayWordInfo = () => {
+    console.log(`DEBUG ${this.props.currentWord}`)
     if (this.props.wordCompleted) {
       return (
         <Grid item>
-          <WordCard2
-            wordInfo={this.state.currentWordInfo}
-            word_audio_duration={this.state.word_audio_duration}
+          <Paper elevation={1} />
+          <Hint 
+            currentHintedChar={this.props.currentWord} 
             autoplayAudio={this.state.checkedAudioAutoPlay}
-            ref={this.wordCardRef}
+            ref={this.hintCardRef}
           />
         </Grid>
       );
@@ -452,7 +392,7 @@ class App extends Component {
       if (cardStateSet.size === 1 && cardStateSet.has("correct")) {
         return this.randomItem(listOfPraises);
       } else {
-        return "click on a character or press SPACEBAR to continue.";
+        return "click on the character or press SPACEBAR to continue.";
       }
     } else {
       // return `I will be giving you feedback as you use the app.`;
@@ -486,22 +426,6 @@ class App extends Component {
       console.log("after 1 sec");
       return this.state.isFetchingWord;
     }, 1000);
-    
-    // return this.state.isFetchingWord;
-    
-    // return curTime > this.state.wordRequestTimeStamp > 2000;
-
-    // if (this.state.isFetchingWord) {
-    //   const curTime = Date.now()
-    //   if (curTime - this.state.wordRequestTimeStamp > 1000) {
-    //     console.log("Word Request is taking more than 1 sec")
-    //     return true;
-    //   } else {
-    //     return false;
-    //   }
-    // } else {
-    //   return false;
-    // }
   }
   handleAudioAutoplaySwitch = (event) => {
     this.setState(
@@ -844,7 +768,6 @@ class App extends Component {
                       <OutsideAlerter focusInputBox={this.focusInputBox}>
                         <CharInput
                           updateCharScore={this.updateCharScore}
-                          updateWordScore={this.updateWordScore}
                           getKeyByValue={this.getKeyByValue}
                           user_uid={this.state.userInfo.id}
                           ref={this.charInputRef}
@@ -907,7 +830,7 @@ class App extends Component {
                       spacing={2}
                     >                      
                       {this.showHint()}
-                      {this.displayWordInfo()}
+                      {/* {this.displayWordInfo()} */}
                     </Grid>                  
                   </Grid>
                 </div>

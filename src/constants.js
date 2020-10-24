@@ -9,7 +9,7 @@ var USER_TIME_LIMIT_IN_MINUTES = 30;
 var REGISTER_URL = "https://localhost:3000/register";
 var SIGNIN_URL = "https://localhost:3000/signin";
 var PROFILE_URL = "https://localhost:3000/profile/";
-var GETWORD_URL = "https://shrouded-harbor-11572.herokuapp.com/getnextword";
+var GETWORD_URL = "https://shrouded-harbor-11572.herokuapp.com/getnextchar";
 var CHARSCORE_URL = "https://shrouded-harbor-11572.herokuapp.com/charscore";
 var UPDATECHARSCORE_URL =
   "https://shrouded-harbor-11572.herokuapp.com/updatecharscore";

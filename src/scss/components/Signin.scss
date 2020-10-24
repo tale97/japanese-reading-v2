@@ -7,39 +7,29 @@ hr {
 }
 
 .flex-container {
-  // border: 3px solid yellow;
   background: $primary-color;
-  height: 100vh;
+  height: 120vh;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  // align-items: center;
 }
 
 .flex-container > div {
-  // border: 2px solid blue; // debug
-  min-height: 0;
+  // border: 2px solid red; // debug
 }
 
 .signin-box {
-  flex: 5;
-  width: 1250px;
+  height: 500px;
+  flex: 3;
   display: flex;
-  flex-direction: row;
   justify-content: space-evenly;
-  align-self: center;
-  align-items: center;
+  width: 100vw;
 }
 
 .header {
-  // border: 1px solid green;
-  width: 545px;
   color: white;
-}
-
-.signin {
-  // border: 1px solid green;
-  width: 545px;
+  flex: 1;
+  align-self: center;
+  max-width: 40vw;
 }
 
 .title {
@@ -53,21 +43,22 @@ hr {
   margin-top: 10px;
 }
 
-.info-panel {
-  flex: 3;
-  background: white;
-  color: #717475;
-  display: flex;
-  justify-content: center;
+.signin {
+  align-self: center;
 }
 
-.info-panel-inner {
-  // border: 1px green solid;
-  min-width: 1250px;
+.info-panel {
+  background: white;
+  height: 50vh;
+  flex: 4;
+  color: #717475;
+}
+
+.flex-container-inner {
+  height: 100%;
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: stretch;
   justify-content: space-evenly;
-  flex-wrap: wrap;
-  align-self: center;
 }

@@ -7,8 +7,6 @@ import "../scss/components/Char.scss";
 
 const mapStateToProps = (state) => {
   return {
-    // charTimestamp: state.changeCardState.charTimestamp,
-    // keyPressed: state.changeInputBox.keyPressed,
     indexCurrentCard: state.changeCardState.indexCurrentCard,
     cardStateList: state.changeCardState.cardStateList,
     onHintedCard: state.changeCardState.onHintedCard,
@@ -53,11 +51,27 @@ class CharList extends React.Component {
       wordCompleted,
     } = this.props;
     var className = "";
+    // if (wordCompleted && this.props.clickedJapChar !== "") {
+    //   if (char === this.props.clickedJapChar) {
+    //     className = className.concat(` clicked `);
+    //   } else {
+    //     className = className.concat(` o-100 `); // default o-100
+    //   }
+    // }
+    // if (idx === indexCurrentCard) {
+    //   className = className.concat(` highlighted `);
+    // } else {
+    //   className = className.concat(
+    //     onHintedCard ? ` o-30 ` : wordCompleted ? "" : ` o-60 `
+    //   );
+    // }
+    // var cardState = cardStateList[idx];
+    // className = className.concat(` ${cardState} `);
+    // return className;
 
     if (wordCompleted) {
       className = className.concat(` completed `);
     }
-
     if (wordCompleted && this.props.clickedJapChar !== "") {
       if (char === this.props.clickedJapChar) {
         className = className.concat(` clicked `);
@@ -101,7 +115,9 @@ class CharList extends React.Component {
         alignItems="center"
         spacing="0"
       >
-        {charsArrayDisplay}
+        <div className="word">
+          {charsArrayDisplay}
+        </div>
       </Grid>
     );
   }

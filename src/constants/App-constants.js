@@ -27,10 +27,10 @@ const listOfEncouragements = [
 ]
 const Introduction = [
   {
-    intro: "Welcome! Your challenging is to type out the pronunciation of Japanese words.",
+    intro: "Welcome! Your challenging is to type out the pronunciation of Japanese characters.",
   },
   {
-    intro: "If you don't know a Japanese character, just press SPACEBAR to learn them.",
+    intro: "If you don't know a Japanese character, simply press SPACEBAR to learn them.",
   },
   // {
   //   element: ".nav-button-walkthrough",

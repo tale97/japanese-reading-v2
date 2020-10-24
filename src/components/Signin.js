@@ -12,13 +12,6 @@ import Paper from "@material-ui/core/Paper";
 import { withStyles } from "@material-ui/core/styles";
 import { SIGNIN_URL } from "../constants";
 import "../scss/components/Signin.scss";
-import TextBlock from "./TextBlock";
-import LoadingPopup from "./LoadingPopup"
-
-import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
-import FontDownloadIcon from "@material-ui/icons/FontDownload";
-import FeedbackIcon from "@material-ui/icons/Feedback";
-import SubtitlesIcon from "@material-ui/icons/Subtitles";
 
 const useStyles = (theme) => ({
   container: {
@@ -59,7 +52,6 @@ class Signin extends React.Component {
       signInPassword: "",
       emailErrorMsg: "",
       passwordErrorMsg: "",
-      openLoadingPopup: false,
     };
   }
 
@@ -73,7 +65,6 @@ class Signin extends React.Component {
 
   sendSigninInfoToBackend = () => {
     const { signInEmail, signInPassword } = this.state;
-    this.setState({ openLoadingPopup: true })
 
     fetch(SIGNIN_URL, {
       method: "post",
@@ -85,8 +76,6 @@ class Signin extends React.Component {
     })
       .then((response) => response.json())
       .then((data) => {
-        this.setState({ openLoadingPopup: false })
-
         if (Object.keys(data).length === 4) {
           this.props.loadUser(data);
           this.props.onRouteChange("home");
@@ -138,118 +127,81 @@ class Signin extends React.Component {
   render() {
     const { classes } = this.props;
     return (
-      <div className="flex-container">
-        <LoadingPopup isOpen={this.state.openLoadingPopup} />
-        <div className="signin-box">
-          <div className="header">
-            <h1 className="title">JapanEZ</h1>
-            <p className="subtitle">
-              Learn Japanese Katakana as you explore English-like Japanese words
-            </p>
-          </div>
-          <div className="signin">
-            <Paper className={classes.paper2} elevation={3}>
-              <Container
-                component="main"
-                maxWidth="xs"
-                className={classes.container}
-              >
-                <CssBaseline />
-                <div className={classes.paper}>
-                  <Typography component="h1" variant="h5">
-                    Sign in
-                  </Typography>
-                  <form className={classes.form} noValidate>
-                    <TextField
-                      error={this.state.emailErrorMsg}
-                      helperText={this.state.emailErrorMsg}
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      id="email"
-                      label="Email Address"
-                      name="email"
-                      autoComplete="email"
-                      // autoFocus
-                      onChange={this.onEmailInput}
-                    />
-                    <TextField
-                      error={this.state.passwordErrorMsg}
-                      helperText={this.state.passwordErrorMsg}
-                      variant="outlined"
-                      margin="normal"
-                      fullWidth
-                      name="password"
-                      label="Password"
-                      type="password"
-                      id="password"
-                      autoComplete="current-password"
-                      onChange={this.onPasswordInput}
-                    />
-                    <FormControlLabel
-                      control={<Checkbox value="remember" color="primary" />}
-                      label="Remember me"
-                    />
-                    <Button
-                      type="submit"
-                      fullWidth
-                      variant="contained"
-                      color="primary"
-                      className={classes.submit}
-                      onClick={this.onSignIn}
-                      style={{ color: "white" }}
+      <div className="signin">
+        <Paper className={classes.paper2} elevation={3}>
+          <Container
+            component="main"
+            maxWidth="xs"
+            className={classes.container}
+          >
+            <CssBaseline />
+            <div className={classes.paper}>
+              <Typography component="h1" variant="h5">
+                Sign in
+              </Typography>
+              <form className={classes.form} noValidate>
+                <TextField
+                  error={this.state.emailErrorMsg}
+                  helperText={this.state.emailErrorMsg}
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  id="email"
+                  label="Email Address"
+                  name="email"
+                  autoComplete="email"
+                  // autoFocus
+                  onChange={this.onEmailInput}
+                />
+                <TextField
+                  error={this.state.passwordErrorMsg}
+                  helperText={this.state.passwordErrorMsg}
+                  variant="outlined"
+                  margin="normal"
+                  fullWidth
+                  name="password"
+                  label="Password"
+                  type="password"
+                  id="password"
+                  autoComplete="current-password"
+                  onChange={this.onPasswordInput}
+                />
+                <FormControlLabel
+                  control={<Checkbox value="remember" color="primary" />}
+                  label="Remember me"
+                />
+                <Button
+                  type="submit"
+                  fullWidth
+                  variant="contained"
+                  color="primary"
+                  className={classes.submit}
+                  onClick={this.onSignIn}
+                  style={{ color: "white" }}
+                >
+                  Sign In
+                </Button>
+                <Grid
+                  container
+                  alignItems="center"
+                  direction="column"
+                  justify="center"
+                >
+                  <Grid item>
+                    {"Don't have an account? "}
+                    <Link
+                      component="button"
+                      variant="body2"
+                      onClick={() => this.props.onRouteChange("register")}
                     >
-                      Sign In
-                    </Button>
-                    <Grid
-                      container
-                      alignItems="center"
-                      direction="column"
-                      justify="center"
-                    >
-                      <Grid item>
-                        {"Don't have an account? "}
-                        <Link
-                          component="button"
-                          variant="body2"
-                          onClick={() => this.props.onRouteChange("register")}
-                        >
-                          {"Register Here"}
-                        </Link>
-                      </Grid>
-                    </Grid>
-                  </form>
-                </div>
-              </Container>
-            </Paper>
-          </div>
-        </div>
-        <div className="info-panel">
-          <div className="info-panel-inner">
-            <TextBlock
-              icon={<AssignmentIndIcon fontSize="large" />}
-              title="Tailored to your learning progress"
-              description="Either you've just started out or you've been learning for a
-                while, the tool helps you master Katakana in an effective way."
-            />
-            <TextBlock
-              icon={<FeedbackIcon fontSize="large" />}
-              title="Built-in mnemonics and smart feedback"
-              description="Receive contextual feedback when you input the wrong character."
-            />
-            <TextBlock
-              icon={<FontDownloadIcon fontSize="large" />}
-              title="Words that sound like English"
-              description="Such as kisu (kiss), in'teru (intelligent). You'd be surprised how much Japanese you've already known."
-            />
-            <TextBlock
-              icon={<SubtitlesIcon fontSize="large" />}
-              title="Learn real common Japanese words"
-              description="You can listen to audio from native speakers. This helps you compare and contrast the pronunciation of
-                Japanese and English."
-            />
-          </div>
-        </div>
+                      {"Sign Up"}
+                    </Link>
+                  </Grid>
+                </Grid>
+              </form>
+            </div>
+          </Container>
+        </Paper>
       </div>
     );
   }
