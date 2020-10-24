@@ -466,7 +466,6 @@ class App extends Component {
   }
   
   handleClickWalkthrough = () => {
-    // this.clickChild(this.charInputRef.current.formRef.current);
     this.clearFormInput(this.charInputRef.current.formRef.current);
     this.setState({ steps1Enabled: true });
     this.setState({ steps2Enabled: false });
