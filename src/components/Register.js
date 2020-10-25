@@ -2,14 +2,21 @@ import React from "react";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import Link from "@material-ui/core/Link";
-import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
 import Paper from "@material-ui/core/Paper";
+import Link from "@material-ui/core/Link";
+import Grid from "@material-ui/core/Grid";
 import { withStyles } from "@material-ui/core/styles";
 import { REGISTER_URL } from "../constants";
 import "../scss/components/Signin.scss";
+import TextBlock from "./TextBlock";
+import LoadingPopup from "./LoadingPopup";
+
+import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
+import FeedbackIcon from "@material-ui/icons/Feedback";
+import InsertChartIcon from '@material-ui/icons/InsertChart';
+
 
 const useStyles = (theme) => ({
   container: {
@@ -55,6 +62,7 @@ class Register extends React.Component {
       nameErrorMsg: "",
       emailErrorMsg: "",
       passwordErrorMsg: "",
+      openLoadingPopup: false,
     };
   }
 
@@ -77,6 +85,7 @@ class Register extends React.Component {
 
   sendFormDataToBackEnd = () => {
     const { name, email, password } = this.state;
+    this.setState({ openLoadingPopup: true })
 
     fetch(REGISTER_URL, {
       method: "post",
@@ -89,6 +98,8 @@ class Register extends React.Component {
     })
       .then((response) => response.json())
       .then((data) => {
+        this.setState({ openLoadingPopup: false })
+
         if (Object.keys(data).length === 4) {
           this.setState({ emailErrorMsg: "" });
           this.props.loadUser(data);
@@ -141,86 +152,117 @@ class Register extends React.Component {
     const { classes } = this.props;
     const { nameErrorMsg, emailErrorMsg, passwordErrorMsg } = this.state;
     return (
-      <div className="signin">
-        <Paper className={classes.paper2}>
-          <Container
-            component="main"
-            maxWidth="xs"
-            className={classes.container}
-          >
-            <CssBaseline />
-            <div className={classes.paper}>
-              <Typography component="h1" variant="h5">
-                Register
-              </Typography>
-              <form className={classes.form} noValidate>
-                <TextField
-                  error={nameErrorMsg}
-                  helperText={nameErrorMsg}
-                  variant="outlined"
-                  id="name"
-                  label="Your Name"
-                  // autoFocus
-                  fullWidth
-                  onChange={this.onNameInput}
-                />
-                <TextField
-                  error={emailErrorMsg}
-                  helperText={emailErrorMsg}
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  id="email"
-                  label="Email Address"
-                  name="email"
-                  autoComplete="email"
-                  onChange={this.onEmailInput}
-                />
-                <TextField
-                  error={passwordErrorMsg}
-                  helperText={passwordErrorMsg}
-                  variant="outlined"
-                  margin="normal"
-                  fullWidth
-                  name="password"
-                  label="Password"
-                  type="password"
-                  id="password"
-                  autoComplete="current-password"
-                  onChange={this.onPasswordInput}
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
-                  className={classes.submit}
-                  onClick={this.onFormSubmit}
-                  style={{ color: "#ffffff" }}
-                >
-                  Get started
-                </Button>
-                <Grid
-                  container
-                  alignItems="center"
-                  direction="column"
-                  justify="center"
-                >
-                  <Grid item>
-                    {"Already registered? "}
-                    <Link
-                      component="button"
-                      variant="body2"
-                      onClick={() => this.props.onRouteChange("signin")}
+      <div className="flex-container">
+        <LoadingPopup isOpen={this.state.openLoadingPopup} />
+        <div className="signin-box">
+          <div className="header">
+            <h1 className="title">JapanEZ</h1>
+            <p className="subtitle">
+              Learn Japanese Katakana characters in an interactive way
+            </p>
+          </div>
+          <div className="signin">
+            <Paper className={classes.paper2}>
+              <Container
+                component="main"
+                maxWidth="xs"
+                className={classes.container}
+              >
+                <CssBaseline />
+                <div className={classes.paper}>
+                  <Typography component="h1" variant="h5">
+                    Register
+                  </Typography>
+                  <form className={classes.form} noValidate>
+                    <TextField
+                      error={nameErrorMsg}
+                      helperText={nameErrorMsg}
+                      variant="outlined"
+                      id="name"
+                      label="Your Name"
+                      // autoFocus
+                      fullWidth
+                      onChange={this.onNameInput}
+                    />
+                    <TextField
+                      error={emailErrorMsg}
+                      helperText={emailErrorMsg}
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      id="email"
+                      label="Email Address"
+                      name="email"
+                      autoComplete="email"
+                      onChange={this.onEmailInput}
+                    />
+                    <TextField
+                      error={passwordErrorMsg}
+                      helperText={passwordErrorMsg}
+                      variant="outlined"
+                      margin="normal"
+                      fullWidth
+                      name="password"
+                      label="Password"
+                      type="password"
+                      id="password"
+                      autoComplete="current-password"
+                      onChange={this.onPasswordInput}
+                    />
+                    <Button
+                      type="submit"
+                      fullWidth
+                      variant="contained"
+                      color="primary"
+                      className={classes.submit}
+                      onClick={this.onFormSubmit}
+                      style={{ color: "#ffffff" }}
                     >
-                      {"Sign In"}
-                    </Link>
-                  </Grid>
-                </Grid>
-              </form>
-            </div>
-          </Container>
-        </Paper>
+                      Get started
+                    </Button>
+                    <Grid
+                      container
+                      alignItems="center"
+                      direction="column"
+                      justify="center"
+                    >
+                      <Grid item>
+                        {"Already registered? "}
+                        <Link
+                          component="button"
+                          variant="body2"
+                          onClick={() => this.props.onRouteChange("signin")}
+                        >
+                          {"Sign In"}
+                        </Link>
+                      </Grid>
+                    </Grid>
+                  </form>
+                </div>
+              </Container>
+            </Paper>
+          </div>
+        </div>
+        <div className="info-panel">
+          <div className="info-panel-inner">
+            <TextBlock
+              icon={<AssignmentIndIcon fontSize="large" />}
+              title="Tailored to your learning progress"
+              description="Either you've just started out or you've been learning for a
+                while, the tool helps you master Katakana in an effective way."
+            />
+            <TextBlock
+              icon={<FeedbackIcon fontSize="large" />}
+              title="Built-in mnemonics and smart feedback"
+              description="Receive contextual feedback as you progress through the app."
+            />
+            <TextBlock
+              icon={<InsertChartIcon fontSize="large" />}
+              title="Easily keep track of your progress"
+              description="You can view your learning progress through interactive and animated visuals and charts."
+            />
+          </div>
+        </div>
       </div>
     );
   }

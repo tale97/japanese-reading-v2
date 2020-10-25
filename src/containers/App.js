@@ -17,6 +17,8 @@ import { Button } from "@material-ui/core";
 import LoadingPopup from "../components/LoadingPopup"
 import Switch from "@material-ui/core/Switch";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import LinearDeterminate from "../components/LinearDeterminate";
+import Box from '@material-ui/core/Box';
 
 // dialog
 import Dialog from "@material-ui/core/Dialog";
@@ -29,12 +31,13 @@ import {
   updateChar,
   updateWord,
   resetStore,
+  loadUserToStore,
 } from "../actions";
 import {
-  GETWORD_URL,
+  GETCHAR_URL,
   UPDATECHARSCORE_URL,
-  MEDIA_BASE_URL_WORD,
   USER_TIME_LIMIT_IN_MINUTES,
+  GETMODULEINFO_URL,
 } from "../constants";
 import {
   listOfPraises,
@@ -82,20 +85,17 @@ const mapDispatchToProps = (dispatch) => {
     resetStore: () => {
       dispatch(resetStore());
     },
+    loadUserToStore: (userInfo) => {
+      dispatch(loadUserToStore(userInfo));
+    },
   };
 };
 
-class App extends Component {
+class App2 extends Component {
   constructor(props) {
     super(props);
     this.state = {
       route: "register", // should be register
-      // userInfo: {
-      //   id: "c85114f6-7417-40cc-8279-b7db7c2e2c3a",
-      //   name: "Tuan Anh",
-      //   email: "tuan@g.com",
-      //   joined: "2020-10-22T19:20:24.629Z",
-      // },
       userInfo: {
         id: "",
         name: "",
@@ -135,6 +135,13 @@ class App extends Component {
     this.wordCardRef = React.createRef();
   }
 
+  componentDidMount = () => {
+    console.log("Running char-based version...");
+    this.props.resetStore();
+    this.requestAndUpdateWord();
+    this.requestModuleInfo();
+  }
+
   componentDidUpdate = (prevProps, prevState) => {
     // check if it's user's first time logging in
     if (this.state.route === "home"
@@ -145,10 +152,12 @@ class App extends Component {
       this.setState({ steps3Enabled: false });
       this.setState({ steps4Enabled: false });
       this.setState({ firstIntroductionEnabled: true });
+      this.requestModuleInfo();
     } 
     if (this.state.userInfo.id !== prevState.userInfo.id) {
       this.props.resetStore();
       this.requestAndUpdateWord();
+      this.requestModuleInfo();
     }
     if (this.props.wordCompleted 
         && this.props.wordCompleted !== prevProps.wordCompleted) {
@@ -202,6 +211,8 @@ class App extends Component {
       return { userInfo };
     });
 
+    this.props.loadUserToStore(user);
+
     LogRocket.identify(user_uid, {
       name: name,
       email: email,
@@ -245,6 +256,25 @@ class App extends Component {
     return audio_string.slice(7, audio_string.length - 1);
   };
 
+  requestModuleInfo = () => {
+    console.log(`REQUESTING MODULE INFO for user ${this.state.userInfo.id}`)
+    fetch(GETMODULEINFO_URL, {
+      method: "post",
+      headers: { "Content-Type": "application/json"},
+      body: JSON.stringify({
+        userId: this.state.userInfo.id,
+        version: "2",
+      }),
+    })
+    .then((res) => res.json())
+    .then((moduleInfoObject) => {
+      this.setState({ moduleInfo: moduleInfoObject });
+    })
+    .catch((error) => {
+      console.log(`Error in requestModuleInfo: ${error}`);
+    });
+  }
+  
   requestNewWord = async() => {
     console.log(`Requesting char for user with id ${this.state.userInfo.id}`)
     return new Promise(resolve => {
@@ -254,7 +284,7 @@ class App extends Component {
       console.log("Word requested at time:", wordRequestTime)
       this.setState({ wordRequestTimeStamp: wordRequestTime})
   
-      fetch(GETWORD_URL, {
+      fetch(GETCHAR_URL, {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -273,6 +303,7 @@ class App extends Component {
   };
 
   moveToNextWord = async(word) => {
+    this.requestModuleInfo();
     console.log(`DEBUG ${JSON.stringify(word)}`)
     const { setCurrentChar, updateWord } = this.props;
     setCurrentChar(word, katakanaToRomaji[word]);
@@ -376,13 +407,13 @@ class App extends Component {
     }
     if (onIncorrectCard) {
       return (romajiNotInDict 
-        ? `${curWrongChar} does not exist in the Japanese alphabet.`
-        : `${curWrongChar} corresponds to ${this.getKeyByValue(katakanaToRomaji, curWrongChar)}, not ${currentJapChar}.`
+        ? `${curWrongChar} does not exist in the Japanese alphabet. Delete your input and try again.`
+        : `${curWrongChar} corresponds to ${this.getKeyByValue(katakanaToRomaji, curWrongChar)}, not ${currentJapChar}. Delete your input and try again.`
       );
     } else if (onHintedCard) {
-      return "type the character."
+      return "Type the character."
     } else if (romajiList[indexCurrentCard] in wrongCharList) {
-      return "press SPACEBAR to learn the character if you're stuck."
+      return "Press spacebar if you're stuck."
     } else if (indexCurrentCard > 0 
       && indexCurrentCard < cardStateList.length
       && cardStateList[indexCurrentCard - 1] === "correct") {
@@ -390,13 +421,13 @@ class App extends Component {
     } else if (wordCompleted && !audioIsPlaying) {
       const cardStateSet = new Set(cardStateList);
       if (cardStateSet.size === 1 && cardStateSet.has("correct")) {
-        return this.randomItem(listOfPraises);
+        return `${this.randomItem(listOfPraises)} Press spacebar to continue.`;
       } else {
-        return "click on the character or press SPACEBAR to continue.";
+        return "Click on the character or press spacebar to continue.";
       }
     } else {
       // return `I will be giving you feedback as you use the app.`;
-      return `press SPACEBAR if you're stuck.`;
+      return `Press spacebar if you're stuck.`;
     }
   };
   setButtonText = () => {
@@ -581,12 +612,14 @@ class App extends Component {
             <Footer />
           </div>
         )
-      case "signin":
-        return (
+        case "signin":
+          console.log(`DEBUG1`)
+          return (
           <Signin onRouteChange={this.onRouteChange} loadUser={this.loadUser} />
-        );
-      case "register":
-        return (
+          );
+        case "register":
+          console.log(`DEBUG1`)
+          return (
           <Register
             onRouteChange={this.onRouteChange}
             loadUser={this.loadUser}
@@ -779,6 +812,7 @@ class App extends Component {
                           requestedWord = {this.state.requestedWord}
                           firstTimeCompleteWordSinceWalkThrough = 
                           {this.firstTimeCompleteWordSinceWalkThrough}
+                          requestModuleInfo={this.requestModuleInfo}
                         />
                       </OutsideAlerter>
                     </Grid>
@@ -788,6 +822,19 @@ class App extends Component {
                         onClickCard={this.onClickCard}
                         clickedJapChar={this.state.clickedJapChar}
                       />
+                    </Grid>
+                    <div className="module-level">
+                      {`Level ${this.state.moduleInfo ? this.state.moduleInfo.moduleIndex : 0}`}
+                    </div>
+                    <Grid item>
+                      <Box
+                        className="progress-bar"
+                        // width="30vw" 
+                      >
+                        <LinearDeterminate 
+                          moduleInfo={this.state.moduleInfo} 
+                        />
+                      </Box>
                     </Grid>
                   </div>
                   {this.state.checkedEnableBlueButton ? (<Grid item > 
@@ -848,4 +895,4 @@ class App extends Component {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps, mapDispatchToProps)(App2);

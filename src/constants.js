@@ -9,10 +9,13 @@ var USER_TIME_LIMIT_IN_MINUTES = 30;
 var REGISTER_URL = "https://localhost:3000/register";
 var SIGNIN_URL = "https://localhost:3000/signin";
 var PROFILE_URL = "https://localhost:3000/profile/";
+var GETCHAR_URL = "https://shrouded-harbor-11572.herokuapp.com/getnextchar";
 var GETWORD_URL = "https://shrouded-harbor-11572.herokuapp.com/getnextchar";
 var CHARSCORE_URL = "https://shrouded-harbor-11572.herokuapp.com/charscore";
 var UPDATECHARSCORE_URL =
   "https://shrouded-harbor-11572.herokuapp.com/updatecharscore";
+var GETMODULEINFO_URL =
+  "https://shrouded-harbor-11572.herokuapp.com/getmoduleinfo";
 var WORDSCORE_URL = "https://shrouded-harbor-11572.herokuapp.com/wordscore";
 var GETCHARSCORE_URL =
   "https://shrouded-harbor-11572.herokuapp.com/getcharscore";
@@ -62,4 +65,6 @@ export {
   UPDATECHARSCORE_URL,
   USER_TIME_LIMIT_IN_MINUTES,
   PRIMARYCOLOR,
+  GETCHAR_URL,
+  GETMODULEINFO_URL,
 };

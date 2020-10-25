@@ -60,6 +60,13 @@
   margin-top: 0.5vh;
 }
 
-// .introjs-skipbutton {
-//   display: none;
-// }
+.module-level {
+  color: $primary-color;
+  font-weight: bold;
+}
+
+.progress-bar {
+  width: calc(170px + 15vh + 2vh); // match hint card
+  margin: 0 auto; // magic for centering item!
+  margin-top: 10px;
+}
