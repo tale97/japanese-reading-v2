@@ -146,7 +146,7 @@ class Signin extends React.Component {
           <div className="header">
             <h1 className="title">JapanEZ</h1>
             <p className="subtitle">
-              Learn Japanese Katakana as you explore English-like Japanese words
+              Learn Japanese Katakana characters in an interactive way
             </p>
           </div>
           <div className="signin">

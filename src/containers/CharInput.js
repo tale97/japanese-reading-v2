@@ -155,17 +155,19 @@ class CharInput extends React.Component {
     const userInputChar = getKeyByValue(katakanaToRomaji, char);
 
     if (char === romajiList[indexCurrentCard] && !onHintedCard) {
-      updateCharScore(user_uid, userInputChar, "+1");
+      console.log("CORRECT!")
+      this.props.requestModuleInfo();
       onCorrectChar();
       onCompleteChar(Date.now(), "correct");
-
+      
       const newRomaji = romajiList[indexCurrentCard + 1];
       const newKana = currentWord[indexCurrentCard + 1];
       setCurrentChar(newKana, newRomaji);
-
+      
       if (indexCurrentCard === romajiList.length - 1) {
         onWordCompletion();
       }
+      updateCharScore(user_uid, userInputChar, "+1");
     } else if (char === romajiList[indexCurrentCard] && onHintedCard) {
       if (indexCurrentCard === romajiList.length - 1) {
         onWordCompletion();
@@ -183,6 +185,7 @@ class CharInput extends React.Component {
       );
       updateCharScore(user_uid, userInputChar, "0");
       updateCharScore(user_uid, currentChar, "0");
+      this.props.requestModuleInfo();
     }
   };
 
@@ -326,6 +329,7 @@ class CharInput extends React.Component {
         romajiList[indexCurrentCard]
       );
       updateCharScore(user_uid, currentChar, "+0");
+      this.props.requestModuleInfo();
       // clear current input
       this.clearCurrentInput(eventTarget);
     } else if (wordCompleted) {
