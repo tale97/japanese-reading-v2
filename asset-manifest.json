@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.css": "/japanese-reading-v2/static/css/main.1cad8b4c.chunk.css",
+    "main.css": "/japanese-reading-v2/static/css/main.50f5a21c.chunk.css",
     "main.js": "/japanese-reading-v2/static/js/main.9887a556.chunk.js",
     "main.js.map": "/japanese-reading-v2/static/js/main.9887a556.chunk.js.map",
     "runtime-main.js": "/japanese-reading-v2/static/js/runtime-main.62a88bb9.js",
@@ -9,10 +9,10 @@
     "static/js/2.f8f7616b.chunk.js": "/japanese-reading-v2/static/js/2.f8f7616b.chunk.js",
     "static/js/2.f8f7616b.chunk.js.map": "/japanese-reading-v2/static/js/2.f8f7616b.chunk.js.map",
     "index.html": "/japanese-reading-v2/index.html",
-    "precache-manifest.5d6c7b0ea4b02f10b3386273e0ecbccd.js": "/japanese-reading-v2/precache-manifest.5d6c7b0ea4b02f10b3386273e0ecbccd.js",
+    "precache-manifest.6ff8ec05e8ba9a6b0b961912ab74b479.js": "/japanese-reading-v2/precache-manifest.6ff8ec05e8ba9a6b0b961912ab74b479.js",
     "service-worker.js": "/japanese-reading-v2/service-worker.js",
     "static/css/2.5f97591b.chunk.css.map": "/japanese-reading-v2/static/css/2.5f97591b.chunk.css.map",
-    "static/css/main.1cad8b4c.chunk.css.map": "/japanese-reading-v2/static/css/main.1cad8b4c.chunk.css.map",
+    "static/css/main.50f5a21c.chunk.css.map": "/japanese-reading-v2/static/css/main.50f5a21c.chunk.css.map",
     "static/js/2.f8f7616b.chunk.js.LICENSE.txt": "/japanese-reading-v2/static/js/2.f8f7616b.chunk.js.LICENSE.txt",
     "static/media/index.css": "/japanese-reading-v2/static/media/roboto-latin-900italic.ebf6d164.woff2"
   },
@@ -20,7 +20,7 @@
     "static/js/runtime-main.62a88bb9.js",
     "static/css/2.5f97591b.chunk.css",
     "static/js/2.f8f7616b.chunk.js",
-    "static/css/main.1cad8b4c.chunk.css",
+    "static/css/main.50f5a21c.chunk.css",
     "static/js/main.9887a556.chunk.js"
   ]
 }
